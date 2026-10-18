@@ -1,0 +1,240 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Método Húngaro Proyecto 2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,700&display=swap">
+<style>
+/* Layout: cabecera con 3 botones grandes (tabs), contenido por sección, matrices en rejilla monoespaciada */
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --fg:#14212b; --muted:#5a6a77; --line:#d6dde3;
+  --accent:#0b6e6e; --accent-fg:#ffffff; --zero:#ffd36b; --zero-fg:#3b2a00; --pick:#0b6e6e; --pick-fg:#fff;
+  --dummy:#e8edf1; --video-btn:#8b5cf6; --video-btn-fg:#ffffff;
+  --font-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --font-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f171d; --surface:#17222a; --fg:#e6edf2; --muted:#9bacb8; --line:#2b3a45;
+  --accent:#4cc3c3; --accent-fg:#06232a; --zero:#8a6a12; --zero-fg:#fff3d1; --pick:#4cc3c3; --pick-fg:#06232a; --dummy:#202e38; --video-btn:#a78bfa; --video-btn-fg:#0f171d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f171d; --surface:#17222a; --fg:#e6edf2; --muted:#9bacb8; --line:#2b3a45;
+  --accent:#4cc3c3; --accent-fg:#06232a; --zero:#8a6a12; --zero-fg:#fff3d1; --pick:#4cc3c3; --pick-fg:#06232a; --dummy:#202e38; --video-btn:#a78bfa; --video-btn-fg:#0f171d; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.6;padding-inline:16px;padding-block:24px 48px}
+.wrap{max-width:920px;margin-inline:auto;display:flex;flex-direction:column;gap:24px}
+
+/* Cabecera Estratégica con Logotipo UMG */
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;position:relative}
+.header-content{flex:1;min-width:0}
+header h1{font-family:var(--font-display);font-size:clamp(1.8rem,4.5vw,2.6rem);line-height:1.1;margin:0 0 8px;text-wrap:balance}
+header p{margin:0;color:var(--muted)}
+.meta{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+
+.umg-logo-container{flex-shrink:0;background:var(--surface);padding:8px;border-radius:12px;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,0.04);transition:transform 0.25s ease, box-shadow 0.25s ease}
+.umg-logo-container:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.08)}
+.umg-logo{width:80px;height:80px;object-fit:contain;display:block;border-radius:50%}
+@media(max-width:540px){header{flex-direction:column-reverse;align-items:center;text-align:center}.umg-logo{width:70px;height:70px}}
+
+/* Navegación Interactiva Mejorada */
+nav{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+nav button{font:inherit;font-weight:600;text-align:left;padding:14px 16px;border:2px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0;transition:all 0.25s ease-in-out;box-shadow:0 2px 4px rgba(0,0,0,0.02)}
+nav button small{font-weight:400;color:var(--muted);font-size:.8rem;transition:color 0.25s ease}
+nav button:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,0.06)}
+nav button[aria-selected="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-fg);box-shadow:0 4px 12px rgba(11,110,110,0.25);transform:translateY(-1px)}
+nav button[aria-selected="true"] small{color:inherit;opacity:.9}
+nav button:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media(max-width:620px){nav{grid-template-columns:1fr}}
+
+section{display:flex;flex-direction:column;gap:20px;min-width:0;animation:fadeIn 0.35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+h2{font-family:var(--font-display);font-size:1.6rem;margin:0;text-wrap:balance}
+h3{font-size:1.1rem;margin:0}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0;transition:box-shadow 0.25s ease}
+.panel:hover{box-shadow:0 4px 12px rgba(0,0,0,0.04)}
+.panel p,.panel ul,.panel ol{margin:0}
+.panel a{color:var(--accent);font-weight:600;transition:opacity 0.2s}
+.panel a:hover{opacity:0.8}
+.panel ul,.panel ol{padding-left:1.2rem;display:flex;flex-direction:column;gap:6px}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.tag{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.note{border-left:4px solid var(--zero);padding:8px 12px;background:var(--dummy);font-size:.92rem}
+.steps{display:flex;flex-direction:column;gap:20px}
+.step{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.step b{font-weight:600}
+.mwrap{overflow-x:auto}
+
+table.m{border-collapse:separate;border-spacing:3px;font-family:var(--font-mono);font-size:.95rem;font-variant-numeric:tabular-nums}
+table.m th{font-weight:600;color:var(--muted);padding:4px 10px;font-size:.78rem;text-align:center;white-space:nowrap}
+table.m th.rh{text-align:right}
+table.m td{min-width:44px;text-align:center;padding:6px 8px;background:var(--bg);border-radius:4px;transition:background 0.2s}
+td.z{background:var(--zero)!important;color:var(--zero-fg);font-weight:600}
+td.d{background:var(--dummy)}
+td.p{background:var(--pick)!important;color:var(--pick-fg);font-weight:600}
+td.lr{box-shadow:inset 0 0 0 2px var(--accent)}
+
+.result{font-family:var(--font-display);font-size:1.25rem}
+
+/* Botones Interactivos General y Video */
+.btn{display:inline-block;font:inherit;font-weight:600;padding:12px 20px;border-radius:8px;background:var(--accent);color:var(--accent-fg);text-decoration:none;transition:all 0.25s ease;box-shadow:0 2px 6px rgba(0,0,0,0.08);text-align:center}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.15);opacity:0.95}
+.btn:active{transform:translateY(0)}
+.btn.off{background:var(--dummy);color:var(--muted);box-shadow:none}
+
+/* Estilo personalizado y destacado para el Botón del Video */
+.btn.v-btn{background:var(--video-btn);color:var(--video-btn-fg);box-shadow:0 4px 14px rgba(139,92,246,0.35);font-size:1.05rem}
+.btn.v-btn:hover{box-shadow:0 6px 20px rgba(139,92,246,0.5);filter:brightness(1.05)}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="header-content">
+    <div class="meta">Investigación de Operaciones · Proyecto 2 ·</div>
+    <h1>PROBLEMAS UTILIZANDO EL MÉTODO HUNGARO</h1>
+    <p>Dos empresas reales, dos matrices que se balancean de forma distinta y una explicación en video.</p>
+  </div>
+  <div class="umg-logo-container" title="Universidad Mariano Gálvez de Guatemala">
+    <img src="https://www.umg.edu.gt/img/Umg.png" alt="Logo UMG" class="umg-logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'48\' fill=\'%230b6e6e\'/><text x=\'50\' y=\'58\' font-size=\'28\' font-weight=\'bold\' fill=\'white\' text-anchor=\'middle\' font-family=\'sans-serif\'>UMG</text></svg>'">
+  </div>
+</header>
+
+<nav role="tablist" aria-label="Secciones del proyecto">
+  <button role="tab" id="t-teoria" aria-selected="true" data-tab="teoria">1. INFORMACIÓN DE LAS EMPRESAS<small>Guatex y Tigo</small></button>
+  <button role="tab" id="t-calculos" aria-selected="false" data-tab="calculos">2. CÁLCULOS RESUELTOS<small>Paso a paso de los dos ejercicios</small></button>
+  <button role="tab" id="t-video" aria-selected="false" data-tab="video">3. VIDEO EXPLICATIVO EN YOUTUBE<small>Explicación del método</small></button>
+</nav>
+
+<section id="teoria" role="tabpanel" aria-labelledby="t-teoria">
+  <div class="panel">
+  <h2>EMPRESAS</h2>
+  <div class="grid2">
+    <div class="panel">
+      <span class="tag">Ejercicio 1 · balanceo horizontal</span>
+      <h3>Guatex</h3>
+      <p>Empresa guatemalteca de paquetería, encomiendas y mensajería. Sus servicios incluyen envío o recolección, rastreo de guías, cálculo de precio, pago contra entrega y portales para clientes corporativos[cite: 5].</p>
+      <ul>
+        <li>Más de 25 años de experiencia[cite: 5]</li>
+        <li>Más de 120 agencias y 168 agentes en el país[cite: 5]</li>
+        <li>Más de 1,200 destinos nacionales[cite: 5]</li>
+        <li>Más de 500 vehículos y más de 1,500 colaboradores[cite: 5]</li>
+      </ul>
+      <p><b>Visión:</b> ser la empresa líder en logística y distribución en Guatemala y expandirse a Centroamérica[cite: 5].</p>
+      <p><b>Problema:</b> asignar 5 pilotos a 4 rutas para minimizar el costo diario de operación (en quetzales)[cite: 5].</p>
+      <p class="tag">Fuente: <a href="https://guatex.com/quienes-somos/" target="_blank" rel="noopener">guatex.com</a>[cite: 5]</p>
+    </div>
+    <div class="panel">
+      <span class="tag">Ejercicio 2 · balanceo vertical</span>
+      <h3>Tigo Guatemala</h3>
+      <p>Operadora de telecomunicaciones del grupo Millicom con servicios de telefonía móvil, internet de banda ancha, televisión de paga y pagos móviles. Sus instalaciones y reparaciones se reparten por zonas entre cuadrillas de técnicos[cite: 6].</p>
+      <ul>
+        <li>En 2021 Millicom compró en US$2,200 millones la participación de 45% de Comcel y pasó a controlar el 100% de Tigo Guatemala[cite: 6]</li>
+        <li>A septiembre de 2021: 11.6 millones de suscriptores móviles, 392,000 de banda ancha y 567,000 de televisión de paga[cite: 6]</li>
+        <li>4,400 torres, más de 21,000 km de fibra y 2 centros de datos TIER3[cite: 6]</li>
+      </ul>
+      <p><b>Problema:</b> asignar 4 técnicos a 5 zonas de servicio para minimizar las horas totales de trabajo[cite: 6].</p>
+      <p class="tag">Fuente: <a href="https://www.telesemana.com/blog/2021/11/15/millicom-se-queda-con-el-total-de-comcel-en-guatemala-y-la-competencia-se-concentrara-de-igual-a-igual-con-claro/" target="_blank" rel="noopener">TeleSemana, noviembre de 2021</a>[cite: 6]</p>
+    </div>
+  </div>
+  <p class="note">Los datos de las empresas provienen de las fuentes indicadas; las cifras de Tigo son de 2021. Los costos y tiempos de las matrices son datos de ejemplo construidos para el ejercicio. El procedimiento es el mismo con cualquier dato[cite: 6].</p>
+</div></section>
+
+<section id="calculos" role="tabpanel" aria-labelledby="t-calculos" hidden>
+  <h2>Cálculos resueltos</h2>
+  <div class="legend"><span style="--c:var(--zero)">Cero</span><span style="--c:var(--dummy)">Fila o columna ficticia</span><span style="--c:var(--pick)">Asignación elegida</span></div>
+  <div id="ej1"></div>
+  <div id="ej2"></div>
+</section>
+
+<section id="video" role="tabpanel" aria-labelledby="t-video" hidden>
+  <h2>Video explicativo</h2>
+  <div class="panel" style="align-items: center; text-align: center; padding: 32px 20px;">
+    <p style="max-width: 600px;">Explicación detallada del Método Húngaro aplicando los dos ejercicios de asignación.</p>
+    <p id="vstatus" style="font-weight: 500; color: var(--muted);"></p>
+    <div style="margin-top: 8px;">
+      <a id="vlink" class="btn v-btn off" href="#video" target="_blank" rel="noopener">▶ Ver el video explicativo en YouTube</a>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+// Enlace de YouTube actualizado para el proyecto.
+var VIDEO_URL = "https://youtu.be/-yC35KUPFRc";
+
+var ej = [
+ {id:"ej1", titulo:"Ejercicio 1 · Guatex · balanceo horizontal",
+ enun:"Costo diario en quetzales de asignar cada piloto a cada ruta. Hay 5 pilotos y 4 rutas, así que se agrega una columna ficticia con ceros.",
+ rows:["Piloto 1","Piloto 2","Piloto 3","Piloto 4","Piloto 5"], cols:["Ruta 1","Ruta 2","Ruta 3","Ruta 4","Ficticia"], dummyCol:4, dummyRow:-1,
+ orig:[[42,38,45,50,0],[39,44,41,47,0],[46,40,43,52,0],[41,37,48,45,0],[44,42,40,49,0]],
+ red:[[3,1,5,5,0],[0,7,1,2,0],[7,3,3,7,0],[2,0,8,0,0],[5,5,0,4,0]],
+ lines1:{rows:[3],cols:[0,2,4]}, k:1,
+ adj:[[3,0,5,4,0],[0,6,1,1,0],[7,2,3,6,0],[3,0,9,0,1],[5,4,0,3,0]],
+ pick:[[0,1],[1,0],[2,4],[3,3],[4,2]], costo:"Costo mínimo total: Q162 diarios.",
+ res:"Piloto 1 → Ruta 2 (Q38) · Piloto 2 → Ruta 1 (Q39) · Piloto 3 → Sin ruta (ficticia) (Q0) · Piloto 4 → Ruta 4 (Q45) · Piloto 5 → Ruta 3 (Q40).",
+ unidad:"Q"},
+ {id:"ej2", titulo:"Ejercicio 2 · Tigo Guatemala · balanceo vertical",
+ enun:"Horas de trabajo de cada técnico en cada zona. Hay 4 técnicos y 5 zonas, así que se agrega una fila ficticia con ceros.",
+ rows:["Técnico 1","Técnico 2","Técnico 3","Técnico 4","Ficticia"], cols:["Zona 1","Zona 2","Zona 3","Zona 4","Zona 5"], dummyCol:-1, dummyRow:4,
+ orig:[[5,7,6,9,8],[6,4,7,8,5],[8,6,5,7,9],[7,5,8,6,6],[0,0,0,0,0]],
+ red:[[0,2,1,4,3],[2,0,3,4,1],[3,1,0,2,4],[2,0,3,1,1],[0,0,0,0,0]],
+ lines1:{rows:[4],cols:[0,1,2]}, k:1,
+ adj:[[0,2,1,3,2],[2,0,3,3,0],[3,1,0,1,3],[2,0,3,0,0],[1,1,1,0,0]],
+ pick:[[0,0],[1,1],[2,2],[3,3],[4,4]], costo:"Costo mínimo total: 20 horas.",
+ res:"Técnico 1 → Zona 1 (5 h) · Técnico 2 → Zona 2 (4 h) · Técnico 3 → Zona 3 (5 h) · Técnico 4 → Zona 4 (6 h) · Ficticia → Zona 5 (sin atender) (0 h). Existe otra solución igual de buena: Técnico 4 → Zona 5 (6 h) y Zona 4 sin atender.",
+ unidad:"h"}
+];
+
+function tabla(e, M, opts){
+ opts=opts||{}; var h='<div class="mwrap"><table class="m"><thead><tr><th></th>';
+ e.cols.forEach(function(c){h+='<th>'+c+'</th>'}); h+='</tr></thead><tbody>';
+ M.forEach(function(r,i){
+   h+='<tr><th class="rh">'+e.rows[i]+'</th>';
+   r.forEach(function(v,j){
+     var cl=[];
+     if(opts.zeros && v===0) cl.push('z');
+     else if(j===e.dummyCol||i===e.dummyRow) cl.push('d');
+     if(opts.pick && opts.pick.some(function(p){return p[0]===i&&p[1]===j})) cl.push('p');
+     if(opts.lines && (opts.lines.rows.indexOf(i)>-1 || opts.lines.cols.indexOf(j)>-1)) cl.push('lr');
+     h+='<td class="'+cl.join(' ')+'">'+v+'</td>';
+   });
+   h+='</tr>';
+ });
+ return h+'</tbody></table></div>';
+}
+function colMin(M){return M[0].map(function(_,j){return Math.min.apply(null,M.map(function(r){return r[j]}))})}
+function rowMin(M){return M.map(function(r){return Math.min.apply(null,r)})}
+
+ej.forEach(function(e){
+ var rm=rowMin(e.orig), afterRow=e.orig.map(function(r,i){return r.map(function(v){return v-rm[i]})});
+ var cm=colMin(afterRow);
+ var h='<div class="panel"><h3>'+e.titulo+'</h3><p>'+e.enun+'</p><div class="steps">';
+ h+='<div class="step"><b>Paso 1. Matriz balanceada</b>'+tabla(e,e.orig)+'</div>';
+ h+='<div class="step"><b>Paso 2. Reducción de filas</b><p>Mínimo de cada fila: '+rm.join(', ')+'.'+(rm.every(function(v){return v===0})?' Cada fila ya tiene un 0 por la columna ficticia, así que la matriz no cambia.':'')+'</p>'+tabla(e,afterRow,{zeros:true})+'</div>';
+ h+='<div class="step"><b>Paso 3. Reducción de columnas</b><p>Mínimo de cada columna: '+cm.join(', ')+'.</p>'+tabla(e,e.red,{zeros:true})+'</div>';
+ var n1=e.lines1.rows.length+e.lines1.cols.length;
+ h+='<div class="step"><b>Paso 4. Cubrir los ceros</b><p>Se necesitan '+n1+' líneas. Como '+n1+' &lt; 5, la solución todavía no es óptima.</p>'+tabla(e,e.red,{zeros:true,lines:e.lines1})+'</div>';
+ h+='<div class="step"><b>Paso 5. Ajuste</b><p>El menor valor no cubierto es k = '+e.k+'. Se resta a los elementos no cubiertos y se suma a los que están en la intersección de dos líneas.</p>'+tabla(e,e.adj,{zeros:true})+'</div>';
+ h+='<div class="step"><b>Paso 6. Prueba de optimalidad y asignación</b><p>Ahora se necesitan 5 líneas, igual a n = 5. Hay solución óptima. Se asigna sobre los ceros, uno por fila y por columna.</p>'+tabla(e,e.adj,{zeros:true,pick:e.pick})+'</div>';
+ h+='<div class="step"><b>Resultado</b><p>'+e.res+'</p><p class="result">'+e.costo+'</p></div>';
+ h+='</div></div>';
+ document.getElementById(e.id).innerHTML=h;
+});
+
+// Pestañas interactivas
+var tabs=document.querySelectorAll('nav button');
+function show(id){
+ tabs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===id)});
+ ['teoria','calculos','video'].forEach(function(s){document.getElementById(s).hidden=(s!==id)});
+}
+tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab);try{history.replaceState(null,'','#'+b.dataset.tab)}catch(_){}})});
+var hsh=(location.hash||'').slice(1); if(['teoria','calculos','video'].indexOf(hsh)>-1) show(hsh);
+
+// Configuración interactiva del video
+var vl=document.getElementById('vlink'), vs=document.getElementById('vstatus');
+if(VIDEO_URL){vl.href=VIDEO_URL;vl.textContent='▶ Ver el video explicativo en YouTube';vl.classList.remove('off');vs.textContent='¡El video ya se encuentra disponible!'}
+else{vl.removeAttribute('target');vs.textContent='El video se publicará aquí antes de la entrega.'}
+</script>
+
+</body></html>
